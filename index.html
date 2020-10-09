@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    body {
+        padding: 50px;
+        font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    }
+
+    a {
+        color: #00B7FF;
+    }
+
+    .chats {
+        padding: 10px 5px;
+        height: 200px;
+        width: 500px;
+        background: #eee;
+        overflow-y: scroll;
+    }
+
+    .chats .chat {
+        display: flex;
+        margin: 5px 0;
+    }
+
+    .chats .chat .group {
+        display: inherit;
+        word-wrap: normal;
+    }
+
+    .chats .chat .group .name {
+        padding: 0 10px;
+        font-weight: bold;
+    }
+
+    .chats .chat .time {
+        padding-left: 10px;
+        font-size: 10px;
+        line-height: 18px;
+        color: #aaa;
+    }
+
+    .message {
+        margin-top: 10px;
+    }
+
+    .message input {
+        padding: 0 5px;
+        height: 25px;
+        width: 300px;
+    }
+
+    .message input:first-child {
+        width: 80px;
+    }
+
+    .message button {
+        height: 32px;
+        width: 100px;
+    }
+</style>
+
+<body>
+
+    <div class="chats">
+        <div class="chat">
+            <div class="group">
+                <div class="name">Robby：</div>
+                <div class="msg">Hi~</div>
+            </div>
+            <div class="time">11分鐘前</div>
+        </div>
+        <div class="chat">
+            <div class="group">
+                <div class="name">Robby：</div>
+                <div class="msg">Hola~</div>
+            </div>
+            <div class="time">10分鐘前</div>
+        </div>
+    </div>
+    <div class="message">
+        <input id="name" type="text" placeholder="your name" />
+        <input id="msg" type="text" placeholder="input the message" />
+        <button type="button">送出</button>
+    </div>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/locale/zh-tw.js'></script>
+    <script>
+        function Send() {
+
+            let name = document.querySelector('#name').value;
+            let msg = document.querySelector('#msg').value;
+            if (!msg && !name) {
+                alert('請輸入大名和訊息');
+                return;
+            }
+            let data = {
+                name: name,
+                msg: msg,
+            };
+            socket.emit('message', data);
+            document.querySelector('#msg').value = '';
+        }
+        document.querySelector('button').addEventListener('click', () => {
+            Send();
+        });
+        function appendData(obj) {
+
+            let el = document.querySelector('.chats');
+            let html = el.innerHTML;
+
+            obj.forEach(element => {
+                html +=
+                    `
+        <div class="chat">
+            <div class="group">
+                <div class="name">${element.name}：</div>
+                <div class="msg">${element.msg}</div>
+            </div>
+            <div class="time">${moment(element.time).fromNow()}</div>
+        </div>
+        `;
+            });
+            el.innerHTML = html.trim();
+        }
+
+    </script>
+    <script src='./socket.js'></script>
+</body>
+
+</html>
